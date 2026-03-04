@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Username Saja</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            text-align: center;
+            width: 300px;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        #pesan {
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        .error { color: red; }
+        .success { color: green; font-size: 20px; }
+
+        /* Tampilan halaman sukses (disembunyikan dulu) */
+        #halaman-lulus {
+            display: none;
+            text-align: center;
+        }
+        
+        .lulus-text {
+            font-size: 50px;
+            color: #28a745;
+            font-weight: bold;
+            border: 5px solid #28a745;
+            padding: 20px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Bagian Login -->
+    <div class="container" id="login-box">
+        <h2>Masuk Sistem</h2>
+        <input type="text" id="username" placeholder="Masukkan Username" required>
+        <button onclick="cekUsername()">Masuk</button>
+        <p id="pesan"></p>
+    </div>
+
+    <!-- Bagian Isi (Lulus) -->
+    <div class="container" id="halaman-lulus">
+        <div class="lulus-text">
+            LULUS
+        </div>
+        <p>Selamat, Anda berhasil masuk.</p>
+        <button onclick="location.reload()" style="background-color: #007bff; margin-top: 20px;">Keluar</button>
+    </div>
+
+    <script>
+        function cekUsername() {
+            // Ambil nilai username
+            var user = document.getElementById('username').value;
+            var pesan = document.getElementById('pesan');
+            var loginBox = document.getElementById('login-box');
+            var halamanLulus = document.getElementById('halaman-lulus');
+
+            // Cek apakah username sama dengan 123434
+            if (user === "123434") {
+                // Jika benar, sembunyikan login dan tampilkan halaman lulus
+                loginBox.style.display = 'none';
+                halamanLulus.style.display = 'block';
+            } else {
+                // Jika salah, tampilkan pesan error
+                pesan.innerHTML = "Username salah!";
+                pesan.className = "error";
+            }
+        }
+    </script>
+
+</body>
+</html>
