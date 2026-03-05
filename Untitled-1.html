@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Hasil Penilaian Wawancara</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Arial, sans-serif; 
+            background: url('https://r.jina.ai/i/0612f386915143369062e783da82c589') no-repeat center center fixed; 
+            background-size: cover;
+            margin: 0; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+            padding: 20px; 
+            overflow-x: hidden; 
+        }
+        
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.4); 
+            z-index: 1;
+        }
+
+        .container { 
+            background: rgba(255, 255, 255, 0.95); 
+            padding: 30px; 
+            border-radius: 15px; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4); 
+            width: 100%; 
+            max-width: 480px; 
+            position: relative; 
+            z-index: 10; 
+        }
+
+        h2, h3 { color: #2c3e50; text-align: center; margin-top: 0; }
+        p.subtitle { color: #576574; font-size: 14px; text-align: center; margin-bottom: 25px; font-weight: 500; }
+        
+        input { 
+            width: 100%; 
+            padding: 12px; 
+            margin-bottom: 15px; 
+            border: 2px solid #dfe6e9; 
+            border-radius: 8px; 
+            font-size: 16px; 
+            box-sizing: border-box; 
+            outline: none; 
+            text-align: center; 
+            transition: 0.3s;
+        }
+        input:focus { border-color: #3498db; box-shadow: 0 0 8px rgba(52, 152, 219, 0.3); }
+
+        .btn-primary { 
+            width: 100%; 
+            padding: 12px; 
+            background-color: #2c3e50; 
+            color: white; 
+            border: none; 
+            border-radius: 8px; 
+            font-size: 16px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            transition: 0.3s;
+        }
+        .btn-primary:hover { background-color: #1a252f; transform: translateY(-2px); }
+
+        #resultCard { display: none; }
+        .detail-group { margin-top: 20px; border-top: 2px solid #eee; padding-top: 15px; }
+        .result-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f9f9f9; font-size: 14px; }
+        .label { color: #2c3e50; font-weight: 500; flex: 2; }
+        .value-container { flex: 1; text-align: right; }
+        .obtained-val { color: #2c3e50; font-weight: bold; font-size: 15px; }
+        .max-val { color: #95a5a6; font-size: 12px; }
+
+        .status-box { margin-top: 25px; padding: 15px; border-radius: 8px; text-align: center; font-weight: bold; font-size: 16px; text-transform: uppercase; }
+        .lolos { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; box-shadow: 0 0 15px rgba(40, 167, 69, 0.2); }
+        .gagal { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        
+        #errorMsg { color: #e74c3c; font-size: 13px; text-align: center; margin-bottom: 15px; display: none; font-weight: bold; }
+        .btn-back { background-color: #95a5a6; margin-top: 15px; width: 100%; padding: 10px; color: white; border: none; border-radius: 8px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div id="loginArea">
+            <h2>Cek Hasil Seleksi</h2>
+            <p class="subtitle">Masukkan NIK untuk melihat detail skor penilaian</p>
+            <input type="text" id="nikInput" placeholder="Masukkan NIK Anda" autocomplete="off">
+            <p id="errorMsg">NIK tidak ditemukan atau salah ketik!</p>
+            <button class="btn-primary" onclick="checkResult()">Lihat Hasil Detail</button>
+        </div>
+
+        <div id="resultCard">
+            <h3 id="resNama"></h3>
+            <p id="resNikDisplay" style="text-align: center; font-size: 12px; color: #95a5a6; margin-top: -10px;"></p>
+            
+            <div class="detail-group">
+                <div class="result-item"><span class="label">Penampilan & Kerapihan</span><div class="value-container"><span class="obtained-val" id="v1"></span><span class="max-val"> / 10</span></div></div>
+                <div class="result-item"><span class="label">Sikap & Etika Wawancara</span><div class="value-container"><span class="obtained-val" id="v2"></span><span class="max-val"> / 20</span></div></div>
+                <div class="result-item"><span class="label">Kemampuan Komunikasi</span><div class="value-container"><span class="obtained-val" id="v3"></span><span class="max-val"> / 20</span></div></div>
+                <div class="result-item"><span class="label">Pemahaman Diri & Posisi</span><div class="value-container"><span class="obtained-val" id="v4"></span><span class="max-val"> / 20</span></div></div>
+                <div class="result-item"><span class="label">Relevansi Jawaban</span><div class="value-container"><span class="obtained-val" id="v5"></span><span class="max-val"> / 20</span></div></div>
+                <div class="result-item"><span class="label">Kelengkapan Berkas</span><div class="value-container"><span class="obtained-val" id="v6"></span><span class="max-val"> / 10</span></div></div>
+                
+                <div class="result-item" style="border-top: 2px solid #3498db; margin-top: 5px; padding-top: 15px;">
+                    <span class="label" style="font-weight: bold; color: #2c3e50;">TOTAL SKOR AKHIR</span> 
+                    <div class="value-container"><span class="obtained-val" id="resTotal" style="font-size: 20px; color: #3498db;"></span><span class="max-val" style="color: #3498db"> / 100</span></div>
+                </div>
+                <div class="result-item"><span class="label">Kategori</span><span class="value" id="resKategori" style="font-weight: bold;"></span></div>
+            </div>
+
+            <div id="statusBox" class="status-box"></div>
+            <button class="btn-back" onclick="location.reload()">Kembali</button>
+        </div>
+    </div>
+
+    <script>
+        // Menggunakan audio tepuk tangan dari file yang diunggah
+        const applauseSound = new Audio('http://googleusercontent.com/file_content/0');
+        applauseSound.crossOrigin = "anonymous";
+
+        const database = [
+            {nik: "3204111002090001", nama: "Adam Parizal Hakim", v: [10, 20, 18, 18, 20, 10], total: 96, kat: "Sangat Baik", status: "Lolos"},
+            {nik: "3205244604090002", nama: "Ade Hilma", v: [10, 18, 10, 10, 18, 10], total: 76, kat: "Baik", status: "Kurang Beruntung Silahkan Belajar Kembali"},
+            {nik: "3204114309080004", nama: "Alifa Ramadhani", v: [10, 18, 17, 20, 15, 10], total: 90, kat: "Sangat Baik", status: "Kurang Beruntung Silahkan Belajar Kembali"},
+            {nik: "3204374503090002", nama: "Annisya Luthfiah Balqis", v: [10, 17, 17, 20, 17, 10], total: 91, kat: "Sangat Baik", status: "Kurang Beruntung Silahkan Belajar Kembali"},
+            {nik: "3204114809080001", nama: "Asty Sahda", v: [10, 20, 10, 18, 18, 10], total: 86, kat: "Sangat Baik", status: "Kurang Beruntung Silahkan Belajar Kembali"},
+            {nik: "3204376302090002", nama: "Aurellia Nikeisha Anddary", v: [10, 18, 17, 18, 18, 10], total: 91, kat: "Sangat Baik", status: "Kurang Beruntung Silahkan Belajar Kembali"},
+            {nik: "3204114512080002", nama: "Azkya Azhar", v: [10, 18, 18, 18, 18, 9], total: 91, kat: "Sangat Baik", status: "Kurang Beruntung Silahkan Belajar Kembali"},
+            {nik: "3204112603090003", nama: "Deden Andri Kurniawan", v: [10, 20, 20, 19, 19, 10], total: 98, kat: "Sangat Baik", status: "Lolos"},
+            {nik: "3204116211080001", nama: "Desita Ardhiyanti", v: [10, 20, 20, 19, 19, 10], total: 98, kat: "Sangat Baik", status: "Lolos"},
+            {nik: "32040960010900001", nama: "Elsa Firda Nabila", v: [10, 20, 18, 18, 18, 10], total: 94, kat: "Sangat Baik", status: "Kurang Beruntung Silahkan Belajar Kembali"},
+            {nik: "3273041508080005", nama: "Faris Baqir Sabani", v: [10, 18, 17, 20, 17, 9], total: 91, kat: "Sangat Baik", status: "Kurang Beruntung Silahkan Belajar Kembali"},
+            {nik: "3204114804090003", nama: "Fitria Azzahra", v: [10, 19, 15, 17, 18, 10], total: 89, kat: "Sangat Baik", status: "Kurang Beruntung Silahkan Belajar Kembali"},
+            {nik: "3204375506090005", nama: "Hasna Salsabil Khairan", v: [10, 19, 20, 18, 15, 10], total: 92, kat: "Sangat Baik", status: "Kurang Beruntung Silahkan Belajar Kembali"},
+            {nik: "3204371709080002", nama: "Irsad Ramadhani", v: [8, 17, 10, 12, 18, 9], total: 74, kat: "Baik", status: "Kurang Beruntung Silahkan Belajar Kembali"},
+            {nik: "3204115806090002", nama: "Keysha Zaniyanti", v: [10, 18, 14, 13, 17, 10], total: 82, kat: "Baik", status: "Kurang Beruntung Silahkan Belajar Kembali"},
+            {nik: "3204376502090005", nama: "Lisna Febriani Putri", v: [10, 19, 15, 20, 18, 9], total: 91, kat: "Sangat Baik", status: "Kurang Beruntung Silahkan Belajar Kembali"},
+            {nik: "helmi243", nama: "M Helmi Nasrullah", v: [10, 19, 18, 12, 19, 10], total: 88, kat: "Sangat Baik", status: "Kurang Beruntung Silahkan Belajar Kembali"},
+            {nik: "320411500509003", nama: "Mega Syalsa", v: [10, 20, 18, 10, 15, 10], total: 83, kat: "Baik", status: "Kurang Beruntung Silahkan Belajar Kembali"},
+            {nik: "3204375910080005", nama: "Nasha Zahratun Nisa", v: [10, 20, 20, 20, 19, 10], total: 99, kat: "Sangat Baik", status: "Lolos"},
+            {nik: "3204116508080001", nama: "Nur Dahlia Putri", v: [10, 20, 10, 10, 15, 9], total: 74, kat: "Baik", status: "Kurang Beruntung Silahkan Belajar Kembali"},
+            {nik: "3204096609080002", nama: "Ratu Jamiah", v: [10, 20, 17, 10, 10, 10], total: 77, kat: "Baik", status: "Kurang Beruntung Silahkan Belajar Kembali"},
+            {nik: "320409110101090005", nama: "Rayhan Saputra", v: [10, 20, 17, 14, 15, 9], total: 85, kat: "Sangat Baik", status: "Kurang Beruntung Silahkan Belajar Kembali"},
+            {nik: "3204090603090001", nama: "Revaldo Nuril", v: [10, 20, 12, 17, 17, 9], total: 85, kat: "Sangat Baik", status: "Kurang Beruntung Silahkan Belajar Kembali"},
+            {nik: "3273034701090001", nama: "Rifqah Haritsyah Ayunarta", v: [10, 18, 15, 16, 16, 9], total: 84, kat: "Baik", status: "Kurang Beruntung Silahkan Belajar Kembali"},
+            {nik: "320427103090001", nama: "Safa Nur Maulidya", v: [10, 18, 12, 13, 10, 9], total: 72, kat: "Baik", status: "Kurang Beruntung Silahkan Belajar Kembali"},
+            {nik: "3204462006120019", nama: "Salmah Kamila Sugiat", v: [10, 20, 10, 15, 17, 9], total: 81, kat: "Baik", status: "Kurang Beruntung Silahkan Belajar Kembali"},
+            {nik: "3204134604090001", nama: "Shabrina Nurma Haffiza", v: [10, 20, 12, 20, 20, 10], total: 92, kat: "Sangat Baik", status: "Kurang Beruntung Silahkan Belajar Kembali"},
+            {nik: "3204375107090003", nama: "Sipa Julianty", v: [10, 15, 10, 15, 15, 9], total: 74, kat: "Baik", status: "Kurang Beruntung Silahkan Belajar Kembali"},
+            {nik: "3204375105090002", nama: "Shyifa Azzahra", v: [10, 20, 15, 15, 15, 10], total: 85, kat: "Sangat Baik", status: "Kurang Beruntung Silahkan Belajar Kembali"},
+            {nik: "3204094109070001", nama: "Silpi Astriani Sahara", v: [10, 20, 14, 10, 14, 9], total: 77, kat: "Baik", status: "Kurang Beruntung Silahkan Belajar Kembali"},
+            {nik: "3273165201090001", nama: "Tiara Anjani", v: [10, 20, 20, 20, 18, 9], total: 97, kat: "Sangat Baik", status: "Kurang Beruntung Silahkan Belajar Kembali"},
+            {nik: "3204372407080001", nama: "Tirta Rangga Saputra", v: [10, 20, 16, 20, 20, 9], total: 95, kat: "Sangat Baik", status: "Kurang Beruntung Silahkan Belajar Kembali"},
+            {nik: "3204116707080001", nama: "Tyvanny Fawnia Azalia Fitri Saputri", v: [10, 19, 19, 20, 17, 10], total: 95, kat: "Sangat Baik", status: "Kurang Beruntung Silahkan Belajar Kembali"},
+            {nik: "3204376002090002", nama: "Widia Putri Anugrah", v: [10, 20, 20, 18, 20, 10], total: 98, kat: "Sangat Baik", status: "Lolos"},
+            {nik: "3204112506080001", nama: "Yusril Lutpi Adittya", v: [10, 20, 20, 20, 20, 9], total: 99, kat: "Sangat Baik", status: "Lolos"}
+        ];
+
+        function fireEffects() {
+            applauseSound.currentTime = 0;
+            applauseSound.play().catch(e => console.log("Browser memblokir putar otomatis suara"));
+
+            var end = Date.now() + (4 * 1000); 
+            var colors = ['#3498db', '#2ecc71', '#f1c40f', '#e74c3c'];
+
+            (function frame() {
+                confetti({
+                    particleCount: 4,
+                    angle: 60,
+                    spread: 60,
+                    origin: { x: 0, y: 0.8 },
+                    colors: colors
+                });
+                confetti({
+                    particleCount: 4,
+                    angle: 120,
+                    spread: 60,
+                    origin: { x: 1, y: 0.8 },
+                    colors: colors
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+        }
+
+        function checkResult() {
+            const input = document.getElementById('nikInput').value.trim();
+            const user = database.find(p => p.nik === input);
+
+            if (user) {
+                document.getElementById('loginArea').style.display = 'none';
+                document.getElementById('resultCard').style.display = 'block';
+                document.getElementById('resNama').innerText = user.nama;
+                document.getElementById('resNikDisplay').innerText = "NIK: " + user.nik;
+                document.getElementById('v1').innerText = user.v[0];
+                document.getElementById('v2').innerText = user.v[1];
+                document.getElementById('v3').innerText = user.v[2];
+                document.getElementById('v4').innerText = user.v[3];
+                document.getElementById('v5').innerText = user.v[4];
+                document.getElementById('v6').innerText = user.v[5];
+                document.getElementById('resTotal').innerText = user.total;
+                document.getElementById('resKategori').innerText = user.kat;
+                
+                const statusBox = document.getElementById('statusBox');
+                statusBox.innerText = user.status;
+                
+                if (user.status === "Lolos") {
+                    statusBox.className = "status-box lolos";
+                    fireEffects(); 
+                } else {
+                    statusBox.className = "status-box gagal";
+                }
+            } else {
+                document.getElementById('errorMsg').style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>
