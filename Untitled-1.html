@@ -77,12 +77,15 @@
         .obtained-val { color: #2c3e50; font-weight: bold; font-size: 15px; }
         .max-val { color: #95a5a6; font-size: 12px; }
 
-        .status-box { margin-top: 25px; padding: 15px; border-radius: 8px; text-align: center; font-weight: bold; font-size: 16px; text-transform: uppercase; }
+        .status-box { margin-top: 25px; padding: 15px; border-radius: 8px; text-align: center; font-weight: bold; font-size: 16px; text-transform: uppercase; line-height: 1.4; }
         .lolos { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; box-shadow: 0 0 15px rgba(40, 167, 69, 0.2); }
         .gagal { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
         
         #errorMsg { color: #e74c3c; font-size: 13px; text-align: center; margin-bottom: 15px; display: none; font-weight: bold; }
         .btn-back { background-color: #95a5a6; margin-top: 15px; width: 100%; padding: 10px; color: white; border: none; border-radius: 8px; cursor: pointer; }
+        
+        /* Gaya khusus untuk menebalkan jabatan */
+        .jabatan-bold { font-weight: 900; color: #1b5e20; text-decoration: underline; }
     </style>
 </head>
 <body>
@@ -121,20 +124,18 @@
     </div>
 
     <script>
-        // Menggunakan audio tepuk tangan dari file yang diunggah
-        const applauseSound = new Audio('http://googleusercontent.com/file_content/0');
-        applauseSound.crossOrigin = "anonymous";
+        const applauseSound = new Audio('uploaded:Efek suara TEPUK TANGAN DAN SORAKAN TERHEBOH - JC Jenz channel.mp3');
 
         const database = [
-            {nik: "3204111002090001", nama: "Adam Parizal Hakim", v: [10, 20, 18, 18, 20, 10], total: 96, kat: "Sangat Baik", status: "Lolos"},
+            {nik: "3204111002090001", nama: "Adam Parizal Hakim", v: [10, 20, 18, 18, 20, 10], total: 96, kat: "Sangat Baik", status: "Lolos", jabatan: "Video Kreatif"},
             {nik: "3205244604090002", nama: "Ade Hilma", v: [10, 18, 10, 10, 18, 10], total: 76, kat: "Baik", status: "Kurang Beruntung Silahkan Belajar Kembali"},
             {nik: "3204114309080004", nama: "Alifa Ramadhani", v: [10, 18, 17, 20, 15, 10], total: 90, kat: "Sangat Baik", status: "Kurang Beruntung Silahkan Belajar Kembali"},
             {nik: "3204374503090002", nama: "Annisya Luthfiah Balqis", v: [10, 17, 17, 20, 17, 10], total: 91, kat: "Sangat Baik", status: "Kurang Beruntung Silahkan Belajar Kembali"},
             {nik: "3204114809080001", nama: "Asty Sahda", v: [10, 20, 10, 18, 18, 10], total: 86, kat: "Sangat Baik", status: "Kurang Beruntung Silahkan Belajar Kembali"},
             {nik: "3204376302090002", nama: "Aurellia Nikeisha Anddary", v: [10, 18, 17, 18, 18, 10], total: 91, kat: "Sangat Baik", status: "Kurang Beruntung Silahkan Belajar Kembali"},
             {nik: "3204114512080002", nama: "Azkya Azhar", v: [10, 18, 18, 18, 18, 9], total: 91, kat: "Sangat Baik", status: "Kurang Beruntung Silahkan Belajar Kembali"},
-            {nik: "3204112603090003", nama: "Deden Andri Kurniawan", v: [10, 20, 20, 19, 19, 10], total: 98, kat: "Sangat Baik", status: "Lolos"},
-            {nik: "3204116211080001", nama: "Desita Ardhiyanti", v: [10, 20, 20, 19, 19, 10], total: 98, kat: "Sangat Baik", status: "Lolos"},
+            {nik: "3204112603090003", nama: "Deden Andri Kurniawan", v: [10, 20, 20, 19, 19, 10], total: 98, kat: "Sangat Baik", status: "Lolos", jabatan: "Director of Photography"},
+            {nik: "3204116211080001", nama: "Desita Ardhiyanti", v: [10, 20, 20, 19, 19, 10], total: 98, kat: "Sangat Baik", status: "Lolos", jabatan: "Konten Kreator"},
             {nik: "32040960010900001", nama: "Elsa Firda Nabila", v: [10, 20, 18, 18, 18, 10], total: 94, kat: "Sangat Baik", status: "Kurang Beruntung Silahkan Belajar Kembali"},
             {nik: "3273041508080005", nama: "Faris Baqir Sabani", v: [10, 18, 17, 20, 17, 9], total: 91, kat: "Sangat Baik", status: "Kurang Beruntung Silahkan Belajar Kembali"},
             {nik: "3204114804090003", nama: "Fitria Azzahra", v: [10, 19, 15, 17, 18, 10], total: 89, kat: "Sangat Baik", status: "Kurang Beruntung Silahkan Belajar Kembali"},
@@ -144,7 +145,7 @@
             {nik: "3204376502090005", nama: "Lisna Febriani Putri", v: [10, 19, 15, 20, 18, 9], total: 91, kat: "Sangat Baik", status: "Kurang Beruntung Silahkan Belajar Kembali"},
             {nik: "helmi243", nama: "M Helmi Nasrullah", v: [10, 19, 18, 12, 19, 10], total: 88, kat: "Sangat Baik", status: "Kurang Beruntung Silahkan Belajar Kembali"},
             {nik: "320411500509003", nama: "Mega Syalsa", v: [10, 20, 18, 10, 15, 10], total: 83, kat: "Baik", status: "Kurang Beruntung Silahkan Belajar Kembali"},
-            {nik: "3204375910080005", nama: "Nasha Zahratun Nisa", v: [10, 20, 20, 20, 19, 10], total: 99, kat: "Sangat Baik", status: "Lolos"},
+            {nik: "3204375910080005", nama: "Nasha Zahratun Nisa", v: [10, 20, 20, 20, 19, 10], total: 99, kat: "Sangat Baik", status: "Lolos", jabatan: "Voice Over"},
             {nik: "3204116508080001", nama: "Nur Dahlia Putri", v: [10, 20, 10, 10, 15, 9], total: 74, kat: "Baik", status: "Kurang Beruntung Silahkan Belajar Kembali"},
             {nik: "3204096609080002", nama: "Ratu Jamiah", v: [10, 20, 17, 10, 10, 10], total: 77, kat: "Baik", status: "Kurang Beruntung Silahkan Belajar Kembali"},
             {nik: "320409110101090005", nama: "Rayhan Saputra", v: [10, 20, 17, 14, 15, 9], total: 85, kat: "Sangat Baik", status: "Kurang Beruntung Silahkan Belajar Kembali"},
@@ -159,36 +160,21 @@
             {nik: "3273165201090001", nama: "Tiara Anjani", v: [10, 20, 20, 20, 18, 9], total: 97, kat: "Sangat Baik", status: "Kurang Beruntung Silahkan Belajar Kembali"},
             {nik: "3204372407080001", nama: "Tirta Rangga Saputra", v: [10, 20, 16, 20, 20, 9], total: 95, kat: "Sangat Baik", status: "Kurang Beruntung Silahkan Belajar Kembali"},
             {nik: "3204116707080001", nama: "Tyvanny Fawnia Azalia Fitri Saputri", v: [10, 19, 19, 20, 17, 10], total: 95, kat: "Sangat Baik", status: "Kurang Beruntung Silahkan Belajar Kembali"},
-            {nik: "3204376002090002", nama: "Widia Putri Anugrah", v: [10, 20, 20, 18, 20, 10], total: 98, kat: "Sangat Baik", status: "Lolos"},
-            {nik: "3204112506080001", nama: "Yusril Lutpi Adittya", v: [10, 20, 20, 20, 20, 9], total: 99, kat: "Sangat Baik", status: "Lolos"}
+            {nik: "3204376002090002", nama: "Widia Putri Anugrah", v: [10, 20, 20, 18, 20, 10], total: 98, kat: "Sangat Baik", status: "Lolos", jabatan: "Tim Kreatif Program"},
+            {nik: "3204112506080001", nama: "Yusril Lutpi Adittya", v: [10, 20, 20, 20, 20, 9], total: 99, kat: "Sangat Baik", status: "Lolos", jabatan: "Kameramen"}
         ];
 
         function fireEffects() {
             applauseSound.currentTime = 0;
-            applauseSound.play().catch(e => console.log("Browser memblokir putar otomatis suara"));
+            applauseSound.play().catch(e => console.log("Audio diblokir browser"));
 
             var end = Date.now() + (4 * 1000); 
             var colors = ['#3498db', '#2ecc71', '#f1c40f', '#e74c3c'];
 
             (function frame() {
-                confetti({
-                    particleCount: 4,
-                    angle: 60,
-                    spread: 60,
-                    origin: { x: 0, y: 0.8 },
-                    colors: colors
-                });
-                confetti({
-                    particleCount: 4,
-                    angle: 120,
-                    spread: 60,
-                    origin: { x: 1, y: 0.8 },
-                    colors: colors
-                });
-
-                if (Date.now() < end) {
-                    requestAnimationFrame(frame);
-                }
+                confetti({ particleCount: 5, angle: 60, spread: 60, origin: { x: 0, y: 0.8 }, colors: colors });
+                confetti({ particleCount: 5, angle: 120, spread: 60, origin: { x: 1, y: 0.8 }, colors: colors });
+                if (Date.now() < end) { requestAnimationFrame(frame); }
             }());
         }
 
@@ -211,12 +197,14 @@
                 document.getElementById('resKategori').innerText = user.kat;
                 
                 const statusBox = document.getElementById('statusBox');
-                statusBox.innerText = user.status;
                 
                 if (user.status === "Lolos") {
+                    // Pesan khusus untuk yang lolos dengan jabatan yang ditebalkan
+                    statusBox.innerHTML = `Selamat Anda diterima menjadi team <span class="jabatan-bold">${user.jabatan}</span> di perusahaan kami`;
                     statusBox.className = "status-box lolos";
                     fireEffects(); 
                 } else {
+                    statusBox.innerText = user.status;
                     statusBox.className = "status-box gagal";
                 }
             } else {
